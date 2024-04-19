@@ -15,21 +15,21 @@ apt:
   upgrade: true
 containerd:
   directory: /mnt/containerd
-  registry:
-  - registry.btech.local
+  # registry:
+  # - registry.btech.local
   source_list: false
-etc:
-  hosts:
-  - 172.18.217.137 registry.btech.local
-  - 172.28.73.170 odc-prd-k8s-loadbalancer-01 loadbalancer-01
+# etc:
+#   hosts:
+#   - 172.18.217.137 registry.btech.local
+#   - 172.28.73.170 odc-prd-k8s-loadbalancer-01 loadbalancer-01
 kubernetes:
   apiserver:
     port: 6443
-    sans:
-    - 172.28.73.170
-    - odc-ddb-vmware-briapi-aadc-k8s-prd
+    # sans:
+    # - 172.28.73.170
+    # - odc-ddb-vmware-briapi-aadc-k8s-prd
   cluster:
-    name: odc-ddb-vmware-briapi-aadc-k8s-prd
+    name: kubernetes
     domain: cluster.local
     dns: 169.254.20.10
   kubelet:
@@ -55,8 +55,8 @@ kubernetes:
       cgroup: system.slice
       cpu: 1000m
       memory: 1Gi
-  version: 1.26.12
-proxy:
-  http_proxy: http://172.18.104.221:1707
-  https_proxy: http://172.18.104.221:1707
-  no_proxy: local,localhost,bri.co.id,127.0.0.1,10.96.0.1,10.96.0.10,169.254.20.10,172.18.217.137
+  version: 1.29.2
+# proxy:
+#   http_proxy: http://172.18.104.221:1707
+#   https_proxy: http://172.18.104.221:1707
+#   no_proxy: local,localhost,bri.co.id,127.0.0.1,10.96.0.1,10.96.0.10,169.254.20.10,172.18.217.137
