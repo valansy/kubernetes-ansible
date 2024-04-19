@@ -1,0 +1,11 @@
+---
+- name: Generate join command for control-plane
+  shell: echo "$(kubeadm token create --print-join-command) --control-plane --certificate-key $(kubeadm init phase upload-certs --upload-certs | grep -vw -e certificate -e Namespace)"
+  register: join_command_controller
+
+- name: Copy join command for control-plane to local file
+  local_action:
+    module: copy
+    content: "{{ join_command_controller.stdout_lines[0] }}"
+    dest: /tmp/join-command-controller
+    mode: 0744

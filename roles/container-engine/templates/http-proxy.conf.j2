@@ -1,0 +1,7 @@
+[Service]
+{% if proxy.http_proxy is defined %}Environment="HTTP_PROXY={{ proxy.http_proxy}}"
+{% endif %}
+{% if proxy.https_proxy is defined %}Environment="HTTPS_PROXY={{ proxy.https_proxy}}"
+{% endif %}
+{% if proxy.no_proxy is defined %}Environment="NO_PROXY={{ proxy.no_proxy }}"
+{% endif %}

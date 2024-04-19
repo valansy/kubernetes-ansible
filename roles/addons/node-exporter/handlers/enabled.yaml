@@ -1,0 +1,60 @@
+---
+- name: Check if already downloaded
+  local_action:
+    module: stat
+    path: /tmp/node_exporter.tar.gz
+  register: node_exporter_release
+
+- name: Download release
+  local_action:
+    module: get_url
+    url: "{{ addons.node_exporter.download_url | default('https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz') }}"
+    dest: /tmp/node_exporter.tar.gz
+  environment: "{{ proxy | default({}) }}"
+  when: not node_exporter_release.stat.exists
+
+- name: Extract release
+  local_action:
+    module: unarchive
+    copy: true
+    src: /tmp/node_exporter.tar.gz
+    dest: /tmp
+
+- name: Copy binary file
+  copy:
+    src: /tmp/node_exporter-1.7.0.linux-amd64/node_exporter
+    dest: "/usr/local/bin/{{ addons.node_exporter.binary_name | default('node_exporter') }}"
+    mode: 0777
+  register: node_exporter_binary
+
+- name: Writing systemd service
+  copy:
+    src: files/node-exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+    group: "root"
+    owner: "root"
+    mode: 0777
+  register: node_exporter_systemd
+
+- name: Restart systemd service
+  systemd:
+    name: node_exporter
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  when: node_exporter_binary.changed or node_exporter_systemd.changed
+
+- name: Listing archived files
+  local_action:
+    module: find
+    paths: /tmp/
+    file_type: any
+    patterns: "node_exporter*"
+  register: node_exporter_find
+
+- name: Removing archived files
+  local_action:
+    module: file
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ node_exporter_find.files }}"

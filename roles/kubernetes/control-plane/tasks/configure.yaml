@@ -1,0 +1,19 @@
+---
+- name: Wait for Kubernetes API server to be ready
+  wait_for:
+    host: localhost
+    port: 6443
+    delay: 5
+    timeout: 300
+
+- name: Configure kubelet to use localhost kube-api
+  replace:
+    path: "{{ item }}"
+    regexp: 'server: https://([0-9]{1,3}\.){3}[0-9]{1,3}:6443'
+    replace: 'server: https://localhost:6443'
+  with_items:
+  - /etc/kubernetes/kubelet.conf
+  - /etc/kubernetes/admin.conf
+  - "{{ ansible_env.PWD }}/.kube/config"
+  notify:
+  - Restart Kubelet

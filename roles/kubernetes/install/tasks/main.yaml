@@ -1,0 +1,33 @@
+---
+- name: Download kubernetes binary package
+  local_action:
+    module: get_url
+    url: "https://dl.k8s.io/release/v{{ kubernetes.version }}/bin/linux/amd64/{{ item }}"
+    dest: /tmp/{{ item }}
+    mode: 0755
+  with_items:
+    - kubeadm
+    - kubectl
+    - kubelet
+  environment: "{{ proxy | default({}) }}"
+
+- name: Copy Kubernetes binary file
+  copy:
+    src: /tmp/{{ item }}
+    dest: /usr/bin/{{ item }}
+    mode: 0755
+  with_items:
+    - kubeadm
+    - kubectl
+    - kubelet
+
+- name: Check if kubeadm has been initialized
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubeadm_initialized_status
+  notify:
+  - Create directories
+  - Writing Kubeadm configuration
+  - Configuring systemd service
+  - Stopping kubelet
+  changed_when: not kubeadm_initialized_status.stat.exists

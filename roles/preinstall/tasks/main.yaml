@@ -1,0 +1,11 @@
+---
+- import_tasks: hosts.yaml
+- import_tasks: update.yaml
+  when: apt.upgrade | default(false)
+- import_tasks: depedencies.yaml
+- import_tasks: swapoff.yaml
+  when: "'k8s_cluster' in group_names"
+- import_tasks: sysctl.yaml
+  when: "'k8s_cluster' in group_names"
+- import_tasks: ntp.yaml
+  wgen: timesync.enabled | default(false)

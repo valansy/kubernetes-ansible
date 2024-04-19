@@ -1,0 +1,15 @@
+---
+- name: Creating kubeadm config file
+  template:
+    src: templates/kubeadm-config.yaml.j2
+    dest: /tmp/kubeadm-config.yaml
+    mode: 0744
+
+- name: Initialize the first control plane
+  shell: |
+    kubeadm init --config /tmp/kubeadm-config.yaml
+
+- name: Cleaning manifest
+  file:
+    path: /tmp/kubeadm-config.yaml
+    state: absent

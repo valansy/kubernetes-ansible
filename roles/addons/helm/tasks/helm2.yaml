@@ -1,0 +1,20 @@
+---
+- name: Check if Helm2 enabled
+  debug:
+    msg: "Checking right now"
+  notify:
+  - Check if Helm2 already downloaded
+  - Download Helm2 release
+  - Extract Helm2 release
+  - Copy Helm2 binary file
+  - Removing Helm2 archived files
+  changed_when: addons.helm2.enabled | default(false)
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Removing Helm2 binary if disabled
+  file:
+    path: "/usr/local/bin/{{ addons.helm2.binary_name | default('helm2') }}"
+    state: absent
+  when: not addons.helm2.enabled | default(true)

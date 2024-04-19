@@ -1,0 +1,27 @@
+---
+- name: Check if enabled
+  debug:
+    msg: "Checking right now"
+  notify:
+  - Check if already downloaded
+  - Download release
+  - Extract release
+  - Copy binary file
+  - Writing systemd service
+  - Restart systemd service
+  - Listing archived files
+  - Removing archived files
+  changed_when: addons.node_exporter.enabled | default(false)
+
+- name: Check if disabled
+  debug:
+    msg: "Checking right now"
+  notify:
+  - Stop systemd service
+  - Removing systemd service
+  - Reload systemd service
+  - Removing binary
+  changed_when: not addons.node_exporter.enabled | default(true)
+
+- name: Flush handlers
+  meta: flush_handlers

@@ -1,0 +1,40 @@
+---
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+  - /etc/containerd
+  - /etc/containerd/certs.d
+  - /etc/systemd/system/containerd.service.d
+  - "{{ containerd.registry | default([]) | map('regex_replace', '^(.*)$', '/etc/containerd/certs.d/\\1') | list }}"
+
+- name: Writing configuration
+  template:
+    src: templates/containerd-config.toml.j2
+    dest: /etc/containerd/config.toml
+    mode: 0644
+
+- name: Writing systemd service
+  template:
+    src: templates/containerd.service.j2
+    dest: /lib/systemd/system/containerd.service
+    mode: 0644
+  notify:
+  - Restart Containerd
+
+- name: Writing private registry certificates
+  copy:
+    src: "{{ 'files/' + item + '.crt' }}"
+    dest: "/etc/containerd/certs.d/{{ item | regex_replace('^(.*)$', '\\1/ca.crt') }}"
+  loop: "{{ containerd.registry | default([]) }}"
+  when: containerd.registry is defined
+
+- name: Writing proxy config
+  template:
+    src: templates/http-proxy.conf.j2
+    dest: /etc/systemd/system/containerd.service.d/http-proxy.conf
+    mode: 0644
+  notify:
+  - Restart Containerd

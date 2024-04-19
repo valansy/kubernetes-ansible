@@ -1,0 +1,23 @@
+---
+- name: Check if control-plane token has been created
+  local_action:
+    module: stat
+    path: /tmp/join-command-controller
+  register: control_plane_token_status
+  notify:
+  - Generate join command for control-plane
+  - Copy join command for control-plane to local file
+  changed_when: not control_plane_token_status.stat.exists
+
+- name: Check if worker token has been created
+  local_action:
+    module: stat
+    path: /tmp/join-command-workers
+  register: worker_token_status
+  notify:
+  - Generate join command for workers
+  - Copy join command for workers to local file
+  changed_when: not worker_token_status.stat.exists
+
+- name: Flush handlers
+  meta: flush_handlers

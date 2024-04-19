@@ -1,0 +1,3 @@
+---
+- import_tasks: bootstrap.yaml
+- import_tasks: configure.yaml

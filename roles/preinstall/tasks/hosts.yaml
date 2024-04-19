@@ -1,0 +1,11 @@
+- name: Update hosts files
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {% for host in groups['all'] %}
+      {{ hostvars[host].ansible_host }} {{ hostvars[host].ansible_hostname }} {{ hostvars[host].ansible_name }}
+      {% endfor %}
+      {% for hosts in etc.hosts | default([]) %}
+      {{ hosts }}
+      {% endfor %}
+    mode: 0644

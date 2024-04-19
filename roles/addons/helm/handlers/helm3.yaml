@@ -1,0 +1,36 @@
+---
+- name: Check if Helm3 already downloaded
+  local_action:
+    module: stat
+    path: /tmp/helm.tar.gz
+  register: helm_release
+
+- name: Download Helm3 release
+  local_action:
+    module: get_url
+    url: "{{ addons.helm3.download_url | default('https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz') }}"
+    dest: /tmp/helm.tar.gz
+  environment: "{{ proxy | default({}) }}"
+  when: not helm_release.stat.exists
+
+- name: Extract Helm3 release
+  local_action:
+    module: unarchive
+    copy: true
+    src: /tmp/helm.tar.gz
+    dest: /tmp
+
+- name: Copy Helm3 binary file
+  copy:
+    src: /tmp/linux-amd64/helm
+    dest: "/usr/local/bin/{{ addons.helm3.binary_name | default('helm3') }}"
+    mode: 0777
+
+- name: Removing Helm3 archived files
+  local_action:
+    module: file
+    path: "{{ item }}"
+    state: absent
+  with_items:
+  - /tmp/helm.tar.gz
+  - /tmp/linux-amd64

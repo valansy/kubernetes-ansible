@@ -1,0 +1,15 @@
+---
+- name: Uninstall Snapd
+  apt:
+    name: snapd
+    state: absent
+
+- name: Update Ubuntu packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+    force_apt_get: yes
+    autoremove: yes
+    install_recommends: true
+    dpkg_options: 'force-confdef,force-confold'
+  environment: "{{ proxy | default({}) }}"

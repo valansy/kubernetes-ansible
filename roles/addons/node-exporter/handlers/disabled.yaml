@@ -1,0 +1,21 @@
+---
+- name: Stop systemd service
+  systemd:
+    name: node_exporter
+    state: stopped
+    enabled: false
+    daemon_reload: true
+
+- name: Removing systemd service
+  file:
+    path: /etc/systemd/system/node_exporter.service
+    state: absent
+
+- name: Reload systemd service
+  systemd:
+    daemon_reload: true
+
+- name: Removing binary
+  file:
+    path: "/usr/local/bin/{{ addons.node_exporter.binary_name | default('node_exporter') }}"
+    state: absent

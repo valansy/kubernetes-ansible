@@ -1,0 +1,13 @@
+---
+- name: Check if kubeadm has been initialized
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubeadm_initialized_status
+  notify:
+  - Copy the join command to workers
+  - Join the workers node to cluster
+  - Removing join command
+  changed_when: not kubeadm_initialized_status.stat.exists
+
+- name: Flush handlers
+  meta: flush_handlers

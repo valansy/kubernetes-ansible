@@ -1,0 +1,29 @@
+---
+- name: Check if kubeadm has been initialized
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubeadm_initialized_status
+  notify:
+  - Creating kubeadm config file
+  - Initialize the first control plane
+  - Cleaning manifest
+  changed_when: not kubeadm_initialized_status.stat.exists
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Create kubeconfig directory
+  file:
+    path: "{{ ansible_env.PWD }}/.kube"
+    state: directory
+    group: "{{ ansible_env.SUDO_USER }}"
+    owner: "{{ ansible_env.SUDO_USER }}"
+
+- name: Writing kubeconfig manifest
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_env.PWD }}/.kube/config"
+    group: "{{ ansible_env.SUDO_USER }}"
+    owner: "{{ ansible_env.SUDO_USER }}"
+    mode: 0600
+    remote_src: true

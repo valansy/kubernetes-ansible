@@ -1,0 +1,8 @@
+---
+- name: Restart Containerd
+  systemd:
+    name: containerd
+    daemon_reload: true
+    masked: false
+    enabled: true
+    state: restarted

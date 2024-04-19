@@ -1,0 +1,16 @@
+---
+- name: Check if Kube VIP enabled
+  debug:
+    msg: "Checking right now"
+  notify:
+  - Writing kube-vip manifest
+  changed_when: addons.vrrp.enabled | default(false)
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Remove kube-vip manifest
+  file:
+    path: /etc/kubernetes/manifests/kube-vip.yaml
+    state: absent
+  when: not addons.vrrp.enabled | default(true)

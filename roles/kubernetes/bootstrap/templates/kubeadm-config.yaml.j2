@@ -1,0 +1,58 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: "v{{ kubernetes.version | default(1.26.9) }}"
+controlPlaneEndpoint: "{{ ansible_host }}:{{ kubernetes.apiserver.port | default('6443') }}"
+clusterName: {{ kubernetes.cluster.name | default('kubernetes') }}
+apiServer:
+  extraArgs:
+    enable-aggregator-routing: "true"
+  certSANs:
+  - "127.0.0.1"
+  - "localhost"
+{% for san in kubernetes.apiserver.sans | default([]) %}
+  - "{{ san }}"
+{% endfor %}
+controllerManager:
+  extraArgs:
+    bind-address: "0.0.0.0"
+scheduler:
+  extraArgs:
+    bind-address: "0.0.0.0"
+    authentication-kubeconfig: "/etc/kubernetes/scheduler.conf"
+    authorization-kubeconfig: "/etc/kubernetes/scheduler.conf"
+networking:
+  podSubnet: {{ kubernetes.subnets.pod | default('10.244.0.0/16') }}
+  serviceSubnet: {{ kubernetes.subnets.service | default('10.96.0.0/12') }}
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+{% if kubernetes.kubelet.reserved.enabled | default(false) %}
+kubeReservedCgroup: "/{{ kubernetes.kubelet.reserved.cgroup | default('runtime.slice') }}"
+kubeReserved:
+  cpu: "{{ kubernetes.kubelet.reserved.cpu | default('1000m') }}"
+  memory: "{{ kubernetes.kubelet.reserved.memory | default('1Gi') }}"
+evictionHard:
+  memory.available: "{{ kubernetes.kubelet.eviction.hard.memoryAvailable | default('100Mi') }}"
+{% endif %}
+{% if kubernetes.system.reserved.enabled | default(false) %}
+systemReservedCgroup: "/{{ kubernetes.system.reserved.cgroup | default('system.slice') }}"
+systemReserved:
+  cpu: "{{ kubernetes.system.reserved.cpu | default('1000m') }}"
+  memory: "{{ kubernetes.system.reserved.memory | default('1Gi') }}"
+{% endif %}
+clusterDomain: {{ kubernetes.cluster.domain | default('cluster.local') }}
+clusterDNS:
+- {{ kubernetes.cluster.dns | default('10.96.0.10') }}
+containerLogMaxSize: "{{ kubernetes.kubelet.container.logMaxSize | default('25Mi') }}"
+containerLogMaxFiles: {{ kubernetes.kubelet.container.logMaxFile | default('2') }}
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  imagePullPolicy: IfNotPresent
+  criSocket: "unix:///run/containerd/containerd.sock"
+{% if not kubernetes.proxy.enabled | default(true) %}
+skipPhases:
+- addon/kube-proxy
+{% endif %}

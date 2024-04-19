@@ -1,0 +1,3 @@
+---
+- import_tasks: generate-token.yaml
+- import_tasks: configure.yaml

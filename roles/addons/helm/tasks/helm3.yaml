@@ -1,0 +1,20 @@
+---
+- name: Check if Helm3 enabled
+  debug:
+    msg: "Checking right now"
+  notify:
+  - Check if Helm3 already downloaded
+  - Download Helm3 release
+  - Extract Helm3 release
+  - Copy Helm3 binary file
+  - Removing Helm3 archived files
+  changed_when: addons.helm3.enabled | default(false)
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Removing Helm3 binary if disabled
+  file:
+    path: "/usr/local/bin/{{ addons.helm3.binary_name | default('helm3') }}"
+    state: absent
+  when: not addons.helm3.enabled | default(true)

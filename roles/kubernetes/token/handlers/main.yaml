@@ -1,0 +1,3 @@
+---
+- import_tasks: control-plane.yaml
+- import_tasks: worker.yaml

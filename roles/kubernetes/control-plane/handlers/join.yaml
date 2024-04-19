@@ -1,0 +1,14 @@
+---
+- name: Copy the join command to control plane
+  copy:
+    src: /tmp/join-command-controller
+    dest: /tmp/join-command.sh
+    mode: 0744
+
+- name: Join the control plane node to cluster
+  command: sh /tmp/join-command.sh
+
+- name: Removing join command
+  file:
+    path: /tmp/join-command.sh
+    state: absent

@@ -1,0 +1,28 @@
+- name: Install depedencies
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: present
+  vars:
+    packages:
+    - apt-transport-https
+    - arping
+    - bash-completion
+    - ca-certificates
+    - dnsutils
+    - glusterfs-client
+    - gnupg
+    - iperf
+    - jq
+    - net-tools
+    - nfs-common
+    - software-properties-common
+    - sysstat
+    - tcpdump
+    - traceroute
+    - tree
+    - unzip
+    - socat
+    - conntrack
+
+  environment: "{{ proxy | default({}) }}"

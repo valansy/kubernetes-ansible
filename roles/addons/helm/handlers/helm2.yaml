@@ -1,0 +1,36 @@
+---
+- name: Check if Helm2 already downloaded
+  local_action:
+    module: stat
+    path: /tmp/helm.tar.gz
+  register: helm_release
+
+- name: Download Helm2 release
+  local_action:
+    module: get_url
+    url: "{{ addons.helm2.download_url | default('https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz') }}"
+    dest: /tmp/helm.tar.gz
+  environment: "{{ proxy | default({}) }}"
+  when: not helm_release.stat.exists
+
+- name: Extract Helm2 release
+  local_action:
+    module: unarchive
+    copy: true
+    src: /tmp/helm.tar.gz
+    dest: /tmp
+
+- name: Copy Helm2 binary file
+  copy:
+    src: /tmp/linux-amd64/helm
+    dest: "/usr/local/bin/{{ addons.helm2.binary_name | default('helm2') }}"
+    mode: 0777
+
+- name: Removing Helm2 archived files
+  local_action:
+    module: file
+    path: "{{ item }}"
+    state: absent
+  with_items:
+  - /tmp/helm.tar.gz
+  - /tmp/linux-amd64

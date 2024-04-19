@@ -1,0 +1,60 @@
+---
+- hosts: all
+  any_errors_fatal: true
+  become: yes
+  strategy: linear
+  vars_files:
+  - variables.yaml
+  roles:
+  - { role: preinstall, tags: preinstall }
+  - { role: addons/node-exporter, tags: node-exporter }
+
+- hosts: k8s_cluster
+  any_errors_fatal: true
+  become: yes
+  gather_facts: false
+  strategy: linear
+  vars_files:
+  - variables.yaml
+  roles:
+  - { role: container-engine, tags: install-cri }
+  - { role: kubernetes/install, tags: install-kubernetes }
+
+- hosts: control_plane[0]
+  any_errors_fatal: true
+  become: yes
+  gather_facts: false
+  vars_files:
+  - variables.yaml
+  roles:
+  - { role: kubernetes/bootstrap, tags: bootstrap-cluster }
+  - { role: kubernetes/token, tags: generate-token }
+
+- hosts: control_plane[1:]
+  any_errors_fatal: true
+  become: yes
+  gather_facts: false
+  vars_files:
+  - variables.yaml
+  roles:
+  - { role: kubernetes/control-plane, tags: join-controllers }
+
+- hosts: workers
+  any_errors_fatal: true
+  become: yes
+  gather_facts: false
+  strategy: linear
+  vars_files:
+  - variables.yaml
+  roles:
+  - { role: kubernetes/worker, tags: join-workers }
+
+- hosts: control_plane
+  any_errors_fatal: true
+  become: yes
+  gather_facts: false
+  vars_files:
+  - variables.yaml
+  roles:
+  - { role: addons/helm, tags: helm }
+  - { role: kubernetes/apps/kube-vip, tags: kube-vip }

@@ -1,0 +1,71 @@
+apiVersion: v1
+data:
+  Corefile: |
+    cluster.local:53 {
+        errors
+        cache {
+            success 9984 30
+            denial 9984 5
+        }
+        reload
+        loop
+        bind 169.254.20.10
+        forward . 10.96.0.10 {
+            force_tcp
+        }
+        prometheus :9253
+        health 169.254.20.10:9254
+    }
+    bri.co.id:53 {
+        errors
+        forward . 172.18.94.233 172.19.94.233 {
+            force_tcp
+            policy sequential
+        }
+        cache {
+            success 9984 3600
+            denial 9984 5
+        }
+        log
+        loop
+        bind 169.254.20.10
+        prometheus :9253
+        reload
+    }
+    in-addr.arpa:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind 169.254.20.10
+        forward . 10.96.0.10 {
+            force_tcp
+        }
+        prometheus :9253
+    }
+    ip6.arpa:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind 169.254.20.10
+        forward . 10.96.0.10 {
+            force_tcp
+        }
+        prometheus :9253
+    }
+    .:53 {
+        errors
+        cache 30
+        reload
+        loop
+        bind 169.254.20.10
+        forward . /etc/resolv.conf
+        prometheus :9253
+    }
+kind: ConfigMap
+metadata:
+  name: node-local-dns
+  namespace: kube-system
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists

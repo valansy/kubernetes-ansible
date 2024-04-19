@@ -1,0 +1,10 @@
+---
+- name: Configure token
+  local_action:
+    module: replace
+    path: "{{ item }}"
+    regexp: 'localhost'
+    replace: '{{ ansible_host }}'
+  with_items:
+  - /tmp/join-command-controller
+  - /tmp/join-command-workers

@@ -1,0 +1,6 @@
+---
+- name: Writing kube-vip manifest
+  template:
+    src: templates/kube-vip.yaml.j2
+    dest: /etc/kubernetes/manifests/kube-vip.yaml
+    mode: 600

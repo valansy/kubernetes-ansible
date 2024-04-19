@@ -1,0 +1,3 @@
+---
+- import_tasks: join.yaml
+- import_tasks: configure.yaml

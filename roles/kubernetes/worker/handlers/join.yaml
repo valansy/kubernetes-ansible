@@ -1,0 +1,14 @@
+---
+- name: Copy the join command to workers
+  copy:
+    src: /tmp/join-command-workers
+    dest: /tmp/join-command.sh
+    mode: 0744
+
+- name: Join the workers node to cluster
+  command: sh /tmp/join-command.sh
+
+- name: Removing join command
+  file:
+    path: /tmp/join-command.sh
+    state: absent

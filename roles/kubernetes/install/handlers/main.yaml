@@ -1,0 +1,24 @@
+---
+- name: Create directories
+  file:
+    path: /etc/systemd/system/kubelet.service.d
+    state: directory
+    mode: 0755
+
+- name: Writing Kubeadm configuration
+  copy:
+    src: files/10-kubeadm.conf
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+- name: Configuring systemd service
+  template:
+    src: templates/kubelet.service.j2
+    dest: /lib/systemd/system/kubelet.service
+
+- name: Stopping kubelet
+  systemd:
+    name: kubelet
+    daemon_reload: true
+    masked: false
+    enabled: true
+    state: stopped
