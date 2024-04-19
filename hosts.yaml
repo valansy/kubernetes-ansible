@@ -1,62 +1,20 @@
 all:
   hosts:
     node1:
-      ansible_host: 172.28.73.171
-      ansible_name: master-01
+      ansible_host: 10.10.19.10
+      ansible_name: kubernetes-01
     node2:
-      ansible_host: 172.28.73.172
-      ansible_name: master-02
+      ansible_host: 10.10.19.11
+      ansible_name: kubernetes-02
     node3:
-      ansible_host: 172.28.73.173
-      ansible_name: master-03
-    node4:
-      ansible_host: 172.28.73.178
-      ansible_name: worker-01
-    node5:
-      ansible_host: 172.28.73.179
-      ansible_name: worker-02
-    node6:
-      ansible_host: 172.28.73.180
-      ansible_name: worker-03
-    node7:
-      ansible_host: 172.28.73.175
-      ansible_name: briapi-01
-    node8:
-      ansible_host: 172.28.73.176
-      ansible_name: briapi-02
-    node9:
-      ansible_host: 172.28.73.177
-      ansible_name: briapi-03
-    node10:
-      ansible_host: 172.28.73.182
-      ansible_name: ingress-01
-    node11:
-      ansible_host: 172.28.73.183
-      ansible_name: ingress-02
-    node12:
-      ansible_host: 172.28.73.184
-      ansible_name: ingress-03
-    node13:
-      ansible_host: 172.28.73.174
-      ansible_name: storage
+      ansible_host: 10.10.19.12
+      ansible_name: kubernetes-03
   children:
     control_plane:
       hosts:
         node1:
         node2:
         node3:
-    workers:
-      hosts:
-        node4:
-        node5:
-        node6:
-        node7:
-        node8:
-        node9:
-        node10:
-        node11:
-        node12:
     k8s_cluster:
       children:
         control_plane:
-        workers:
