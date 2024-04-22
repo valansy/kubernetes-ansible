@@ -11,6 +11,16 @@
     - kubelet
   environment: "{{ proxy | default({}) }}"
 
+- name: Download crictl binary package
+  local_action:
+    module: get_url
+    url: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.29.0/crictl-v1.29.0-linux-amd64.tar.gz"
+    dest: /tmp/{{ item }}
+    mode: 0755
+  with_items:
+    - crictl
+  environment: "{{ proxy | default({}) }}"
+
 - name: Copy Kubernetes binary file
   copy:
     src: /tmp/{{ item }}
@@ -20,6 +30,7 @@
     - kubeadm
     - kubectl
     - kubelet
+    - crictl
 
 - name: Check if kubeadm has been initialized
   stat:

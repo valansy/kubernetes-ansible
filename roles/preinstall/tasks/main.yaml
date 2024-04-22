@@ -7,5 +7,5 @@
   when: "'k8s_cluster' in group_names"
 - import_tasks: sysctl.yaml
   when: "'k8s_cluster' in group_names"
-- import_tasks: ntp.yaml
-  wgen: timesync.enabled | default(false)
+  #- import_tasks: ntp.yaml
+  #  wgen: timesync.enabled | default(false)

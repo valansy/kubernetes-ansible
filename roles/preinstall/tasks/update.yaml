@@ -12,4 +12,4 @@
     autoremove: yes
     install_recommends: true
     dpkg_options: 'force-confdef,force-confold'
-  environment: "{{ proxy | default({}) }}"
+    #  environment: "{{ proxy | default({}) }}"
