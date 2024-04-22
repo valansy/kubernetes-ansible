@@ -1,62 +1,70 @@
-addons:
-  helm2:
-    enabled: true
-    binary_name: helm2
-    download_url: https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
-  helm3:
-    enabled: true
-    binary_name: helm3
-    download_url: https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz
-  node_exporter:
-    enabled: true
-    binary_name: node_exporter
-    download_url: https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
+#addons:
+#  helm2:
+#    enabled: true
+#    binary_name: helm2
+#    download_url: https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
+#  helm3:
+#    enabled: true
+#    binary_name: helm3
+#    download_url: https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz
+#  vrrp:
+#    enabled: true
+#    address: YOUR_VIP_ADDRESS
+#    port: 6443
+#    interface: ens3
+#  node_exporter:
+#    enabled: true
+#    binary_name: node_exporter
+#    download_url: https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
 apt:
   upgrade: true
-containerd:
-  directory: /mnt/containerd
-  # registry:
-  # - registry.btech.local
-  source_list: false
+#containerd:
+#  directory: /var/lib/containerd
+#  registry:
+#  - registry.btech.local
+#  - YOUR_REGISTRY_ADDRESS
+#  source_list: false
 # etc:
 #   hosts:
 #   - 172.18.217.137 registry.btech.local
-#   - 172.28.73.170 odc-prd-k8s-loadbalancer-01 loadbalancer-01
 kubernetes:
-  apiserver:
-    port: 6443
-    # sans:
-    # - 172.28.73.170
-    # - odc-ddb-vmware-briapi-aadc-k8s-prd
-  cluster:
-    name: kubernetes
-    domain: cluster.local
-    dns: 169.254.20.10
-  kubelet:
-    container:
-      logMaxSize: 25Mi
-      logMaxFile: 2
-    eviction:
-      hard:
-        memoryAvailable: 100Mi
-    reserved:
-      enabled: true
-      cgroup: runtime.slice
-      cpu: 1000m
-      memory: 1Gi
-  proxy:
-    enabled: true
-  subnets:
-    pod: 10.244.0.0/16
-    service: 10.96.0.0/12
-  system:
-    reserved:
-      enabled: true
-      cgroup: system.slice
-      cpu: 1000m
-      memory: 1Gi
-  version: 1.29.2
-# proxy:
-#   http_proxy: http://172.18.104.221:1707
-#   https_proxy: http://172.18.104.221:1707
-#   no_proxy: local,localhost,bri.co.id,127.0.0.1,10.96.0.1,10.96.0.10,169.254.20.10,172.18.217.137
+  #apiserver:
+  #  port: 6443
+  #  sans:
+  #  - YOUR_ADDITIONAL_ADDRESS
+  #cluster:
+  #  name: CLUSTER_NAME
+  #  domain: cluster.local
+  #  dns: 169.254.20.10
+  #kubelet:
+  #  container:
+  #    logMaxSize: 25Mi
+  #    logMaxFile: 2
+  #  eviction:
+  #    hard:
+  #      memoryAvailable: 100Mi
+  #  reserved:
+  #    enabled: true
+  #    cgroup: runtime.slice
+  #    cpu: 1000m
+  #    memory: 1Gi
+  #proxy:
+  #  enabled: false
+  #subnets:
+  #  pod: 10.244.0.0/16
+  #  service: 10.96.0.0/12
+  #system:
+  #  reserved:
+  #    enabled: true
+  #    cgroup: system.slice
+  #    cpu: 1000m
+  #    memory: 1Gi
+  version: 1.29.0
+#proxy:
+#  http_proxy: http://YOUR_ADDRESS:PORT
+#  https_proxy: http://YOUR_ADDRESS:PORT
+#  no_proxy: local,localhost,bri.co.id,127.0.0.1,10.96.0.1,10.96.0.10,169.254.20.10
+#timesync:
+#  enabled: true
+#  server: YOUR_ADDRESS
+#  zone: Asia/Jakarta
