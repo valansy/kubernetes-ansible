@@ -18,8 +18,8 @@
 #    download_url: https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
 apt:
   upgrade: true
-#containerd:
-#  directory: /var/lib/containerd
+containerd:
+ directory: /var/lib/containerd
 #  registry:
 #  - registry.btech.local
 #  - YOUR_REGISTRY_ADDRESS
@@ -32,14 +32,14 @@ kubernetes:
   #  port: 6443
   #  sans:
   #  - YOUR_ADDITIONAL_ADDRESS
-  #cluster:
-  #  name: CLUSTER_NAME
-  #  domain: cluster.local
-  #  dns: 169.254.20.10
-  #kubelet:
-  #  container:
-  #    logMaxSize: 25Mi
-  #    logMaxFile: 2
+  cluster:
+   name: kubernetes-nauval
+   domain: cluster.local
+   dns: 169.254.20.10
+  kubelet:
+   container:
+     logMaxSize: 25Mi
+     logMaxFile: 2
   #  eviction:
   #    hard:
   #      memoryAvailable: 100Mi
